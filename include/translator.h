@@ -259,7 +259,7 @@ public:
 					if (right != 0)
 						res.push(left / right);
 					else throw runtime_error("Runtime error: division by zero!");
-					break;
+					break; 
 				}
 			}
 
