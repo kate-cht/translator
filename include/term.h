@@ -16,19 +16,15 @@ class term
 {
 protected:
 	map<char, size_t> priorit{ {'+',  1}, {'-', 1}, {'/', 2}, {'*', 2} };
+	
 	types type;
 public:
 	types getType() const noexcept { return type; };
-	virtual double getValue() const noexcept = 0;
-	virtual char getOperation() const noexcept = 0;
-	virtual size_t  getPriority() const noexcept = 0;
 };
 
 class operand: public term
 {
 	double value;
-	size_t  getPriority() const noexcept { return 0; };
-	char getOperation() const noexcept { return 0; };
 public:
 	operand(double val)
 	{
@@ -49,10 +45,6 @@ class operation : public term
 {
 	char oper;
 	int priority;
-	double getValue() const noexcept
-	{
-		return 0;
-	};
 public:
 	operation(char op)
 	{
@@ -75,8 +67,6 @@ public:
 class open_bracket : public term
 {
 	char bracket;
-	double getValue() const noexcept { return 0; };
-	size_t  getPriority() const noexcept { return 0; };
 public:
 	open_bracket() : bracket('(') { type = open_bracket_; };
 	char getOperation() const noexcept {
@@ -88,12 +78,9 @@ class close_bracket : public term
 {
 private:
 	char bracket;
-	double getValue() const noexcept { return 0; };
-	size_t  getPriority() const noexcept { return 0; };
 public:
 	close_bracket() : bracket(')') { type = close_bracket_; };
 	char getOperation() const noexcept {
 		return bracket;
 	};
 };
-

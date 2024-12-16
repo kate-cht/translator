@@ -5,8 +5,6 @@
 #include <iostream>
 using namespace std;
 
-//map<types, size_t> states{ { operand_, 0 }, { operation_, 1 }, { open_bracket_, 2 }, { close_bracket_, 3 } };
-
 class translator 
 {
 private:
@@ -14,15 +12,12 @@ private:
 	mVector<term*> terms;
 	mVector<term*> pz; // польская запись
 	string expression;
-	size_t  getPriority() const noexcept { return 0; };
-	char getOperation() const noexcept { return 0; };
-	double getValue() const noexcept { return 0; };
+	
 public:
 
 	translator(string str) {
 		expression = str;
 	} 
-
 	string get_expression()
 	{
 		return expression;
@@ -33,11 +28,6 @@ public:
 			delete terms[i];
 		}
 	}
-
-	
-
-	
-
 	void parser() // перевод выражения-строки в вектор лексем
 	{
 		string str = expression;
@@ -93,28 +83,24 @@ public:
 		for (size_t i = 0; i < sz; ++i)
 		{
 			if (terms[i]->getType() == operand_)
-				std::cout << terms[i]->getValue() << " ";
-			else std::cout << terms[i]->getOperation() << " ";
+				cout << ((operand*)(terms[i]))->getValue() << " ";
+			else cout << ((operation*)(terms[i]))->getOperation() << " ";
 		}
-		std::cout << std::endl;
+		cout << endl;
 	}
 
 	void syntax_analysis() // синтаксический анализ
 	{
-		//map<types, size_t> states{ { operand_, 0 }, { operation_, 1 }, { open_bracket_, 2 }, { close_bracket_, 3 } };
-	
-		size_t state, op_br = 0, cl_br = 0, sz = terms.size();
+		size_t state, sz = terms.size();
 		if (!(checkBrackets(expression)))
 			throw logic_error("incorrect_bracket");
-
 		if (terms[0]->getType() == operand_)
 			state = 0;
 		if (terms[0]->getType() == operation_ || terms[0]->getType() == close_bracket_)
 			throw logic_error("expression_syntax_error");
 		if (terms[0]->getType() == open_bracket_) {
 			state = 2;
-		}
-		
+		}		
 		for (size_t i = 1; i < sz; i++) {
 			
 			switch (state)
@@ -149,9 +135,6 @@ public:
 		if (state == 1 || state == 2){
 			throw logic_error("expression_syntax_error");
 		}
-		if (cl_br != op_br){
-			throw logic_error("expression_syntax_error");
-		}
 	}
 
 	void converter() // перевод вектора лексем в ПЗ
@@ -170,7 +153,7 @@ public:
 			{
 				if (!(st.isEmpty()))
 				{
-					while (terms[i]->getPriority() <= st.top()->getPriority()) 
+					while ((!(st.isEmpty())) && st.top()->getType() == operation_ && ((operation*)(terms[i]))->getPriority() <= ((operation*)(st.top()))->getPriority())
 					{
 						pz.push_back(st.top());
 						st.pop();
@@ -186,7 +169,7 @@ public:
 			}
 			if (terms[i]->getType() == close_bracket_)
 			{
-				while ((st.top()->getType() != open_bracket_) && (!(st.isEmpty())))
+				while ((!(st.isEmpty())) && (st.top()->getType() != open_bracket_))
 				{
 					pz.push_back(st.top());
 					st.pop();
@@ -209,8 +192,8 @@ public:
 		for (size_t i = 0; i < sz; ++i)
 		{
 			if (pz[i]->getType() == operand_)
-				std::cout << pz[i]->getValue() << " ";
-			else std::cout << pz[i]->getOperation() << " ";
+				cout << ((operand*)(pz[i]))->getValue() << " ";
+			else cout << ((operation*)(pz[i]))->getOperation() << " ";
 		}
 		std::cout << std::endl;
 	}
@@ -253,7 +236,7 @@ public:
 		{
 			if (pz[i]->getType() == operand_)
 			{
-				res.push(pz[i]->getValue());
+				res.push(((operand*)(pz[i]))->getValue());
 			}
 			if (pz[i]->getType() == operation_ )
 			{
@@ -261,7 +244,7 @@ public:
 				res.pop();
 				left = res.top();
 				res.pop();
-				switch (pz[i]->getOperation())
+				switch (((operation*)(pz[i]))->getOperation())
 				{
 				case('+'):
 					res.push(left + right);
@@ -283,8 +266,6 @@ public:
 		}
 		return res.top();
 	}
-
-
 	double get_result()
 	{
 		this->parser();
