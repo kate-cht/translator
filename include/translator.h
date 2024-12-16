@@ -250,7 +250,7 @@ public:
 					res.push(left + right);
 					break;
 				case('-'):
-					res.push(left - right);
+					res.push(left - right); 
 					break;
 				case('*'):
 					res.push(left * right);

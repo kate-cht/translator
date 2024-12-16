@@ -51,7 +51,7 @@ public:
 		oper = op;
 		priority = priorit[op];
 		type = operation_;
-	};
+	}; 
 	size_t getPriority() const noexcept
 	{
 		return priority;
